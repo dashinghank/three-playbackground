@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "dgo";
+  src: local("dgo"), url(~/assets/fonts/dgo-regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "arial-reg";
+  src: local("arial-reg"), url(~/assets/fonts/arial-regular.ttf) format("truetype");
+}
+@font-face {
+  font-family: "arial-bd";
+  src: local("arial-bd"), url(~/assets/fonts/arial-bold.ttf) format("truetype");
+}
+@font-face {
+  font-family: "arial-black";
+  src: local("arial-black"), url(~/assets/fonts/arial-black.ttf) format("truetype");
+}
+@font-face {
+  font-family: "corbel-bold-italic";
+  src: local("corbel-bold-italic"), url(~/assets/fonts/corbel-bold-italic.ttf) format("truetype");
+}

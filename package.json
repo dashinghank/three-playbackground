@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^5.3.1",
+    "nuxt": "3.0.0-rc.6"
+  },
+  "dependencies": {
+    "@types/three": "^0.143.0",
+    "cannon-es": "^0.20.0",
+    "cannon-es-debugger": "^1.0.0",
+    "flag-waiter": "^1.0.5",
+    "gsap": "npm:@gsap/shockingly",
+    "lil-gui": "^0.17.0",
+    "three": "^0.143.0"
+  }
+}
