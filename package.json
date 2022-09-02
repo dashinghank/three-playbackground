@@ -11,12 +11,14 @@
     "nuxt": "3.0.0-rc.6"
   },
   "dependencies": {
+    "@emailjs/browser": "^3.7.0",
     "@types/three": "^0.143.0",
     "cannon-es": "^0.20.0",
     "cannon-es-debugger": "^1.0.0",
     "flag-waiter": "^1.0.5",
     "gsap": "npm:@gsap/shockingly",
     "lil-gui": "^0.17.0",
+    "smooth-scrollbar": "^8.7.5",
     "three": "^0.143.0"
   }
 }

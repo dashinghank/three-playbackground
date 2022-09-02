@@ -3,19 +3,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { CustomEase } from "gsap/CustomEase";
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import * as CANNON from "cannon-es";
-import CannonDebugger from "cannon-es-debugger";
-import gsapCore from "gsap/gsap-core";
 import { WaitMilliseconds } from "flag-waiter";
 gsap.registerPlugin(ScrollTrigger, CustomEase);
-
-interface ThreeTexture {
-  urls: string[];
-  textures: THREE.Texture[];
-  addIconUrls(urls: string[]);
-  getIconTextures();
-}
 
 class Member {
   iconUrls: string[] = [];
@@ -42,10 +32,7 @@ class Member {
   addCompanyPosition(companyPosition: string) {
     this.companyPosition = companyPosition;
   }
-  getName = () => this.name;
-  getCompanyPosition = () => this.companyPosition;
   getIconTextures = () => this.iconTextures;
-  getEmojiTextures = () => this.emojiTextures;
 }
 
 //THREE Canvas、scene、clock
@@ -61,6 +48,53 @@ const worldNog = ref();
 const worldObjectsToUpdate: any = ref([]);
 
 const objectsToUpdate: any = ref([]);
+
+// Member Icon img srcs
+
+const memberBtnDatas = ref([
+  {
+    name: "Kevin",
+    companyPosition: "CO_founder & CTO",
+    memberIconImgSrc: "member/k1.png",
+    memberEmojiImgSrcs: ["member/emojis/k1.png", "member/emojis/k2.png", "member/emojis/k3.png"],
+  },
+  {
+    name: "Pon",
+    companyPosition: "CO_founder & CBO",
+    memberIconImgSrc: "member/p1.png",
+    memberEmojiImgSrcs: ["member/emojis/p1.png", "member/emojis/p2.png", "member/emojis/p3.png"],
+  },
+  {
+    name: "Hank",
+    companyPosition: "Frond-end developer",
+    memberIconImgSrc: "member/h2.png",
+    memberEmojiImgSrcs: ["member/emojis/h1.png", "member/emojis/h2.png", "member/emojis/h3.png"],
+  },
+  {
+    name: "Rinran",
+    companyPosition: "Visual designer",
+    memberIconImgSrc: "member/r1.png",
+    memberEmojiImgSrcs: ["member/emojis/r1.png", "member/emojis/r2.svg", "member/emojis/r3.svg"],
+  },
+  {
+    name: "MA",
+    companyPosition: "Visual designer",
+    memberIconImgSrc: "member/m1.png",
+    memberEmojiImgSrcs: ["member/emojis/m1.png", "member/emojis/m2.png", "member/emojis/m3.png"],
+  },
+  {
+    name: "Gp",
+    companyPosition: "Sales",
+    memberIconImgSrc: "member/g1.png",
+    memberEmojiImgSrcs: ["member/emojis/g1.png", "member/emojis/g2.png", "member/emojis/g3.png"],
+  },
+  {
+    name: "Vivi",
+    companyPosition: "Sales",
+    memberIconImgSrc: "member/vivi01.png",
+    memberEmojiImgSrcs: ["member/emojis/vivi01.png", "member/emojis/vivi02.png", "member/emojis/vivi03.png"],
+  },
+]);
 
 //Icons 為所有成員
 var members = ref({});
@@ -81,10 +115,6 @@ const textureLoader = new THREE.TextureLoader();
 onMounted(async () => {
   members.value["kevin"] = new Member();
   members.value["kevin"].addIconUrls(["/member/k1.png", "/member/k2.png", "/member/k3.png"]);
-  members.value["kevin"].addName("KEVIN");
-  members.value["kevin"].addCompanyPosition("CTO");
-  members.value["kevin"].addEmojiUrls(["/member/emojis/k1.png", "/member/emojis/k2.png", "/member/emojis/k3.png"]);
-
   members.value["pon"] = new Member();
   members.value["pon"].addIconUrls(["/member/p1.png", "/member/p2.png", "/member/p3.png"]);
   members.value["hank"] = new Member();
@@ -98,15 +128,8 @@ onMounted(async () => {
   members.value["vi"] = new Member();
   members.value["vi"].addIconUrls(["/member/vivi01.png", "/member/vivi02.png", "/member/vivi03.png"]);
 
-  const btnMemberTexture = textureLoader.load("/member/btn.png");
-  // initCannon();
   try {
-    // const sphereGeometry = new THREE.SphereGeometry(100, 32, 32);
-    const sphereGeometry = new THREE.PlaneGeometry(100, 100, 32, 32);
-    const btnGeometry = new THREE.PlaneGeometry(360, 100, 32, 32);
-    const lilIconGeometry = new THREE.PlaneGeometry(70, 70, 32, 32);
-    createObject(btnGeometry, new THREE.Vector3(0, -150, -200), { map: btnMemberTexture, transparent: true });
-    createObject(lilIconGeometry, new THREE.Vector3(0, -150, -200), { map: members.value["kevin"].getIconTextures()[0], transparent: true });
+    const sphereGeometry = new THREE.PlaneGeometry(85, 100, 32, 32);
 
     initThree();
 
@@ -194,47 +217,47 @@ function initThree() {
 
   // Scene
 
-  const raycaster = new THREE.Raycaster();
-  const pointer = new THREE.Vector2();
-  var intersectedObjects = objectsToUpdate.value[0].mesh;
+  // const raycaster = new THREE.Raycaster();
+  // const pointer = new THREE.Vector2();
+  // var intersectedObjects = objectsToUpdate.value[0].mesh;
 
-  const btnUpMemberTexture = textureLoader.load("/member/btn.png");
-  const btnDownMemberTexture = textureLoader.load("/member/btnDown.png");
+  // const btnUpMemberTexture = textureLoader.load("/member/btn.png");
+  // const btnDownMemberTexture = textureLoader.load("/member/btnDown.png");
 
-  const onMouseClick = (event) => {
-    raycaster.setFromCamera(pointer, camera);
-    var isIntersected = raycaster.intersectObject(intersectedObjects);
-    if (isIntersected.length > 0) {
-      console.log("Mesh clicked!");
-      console.log(members.value, currentMemberIndex.value);
+  // const onMouseClick = (event) => {
+  //   raycaster.setFromCamera(pointer, camera);
+  //   var isIntersected = raycaster.intersectObject(intersectedObjects);
+  //   if (isIntersected.length > 0) {
+  //     console.log("Mesh clicked!");
+  //     console.log(members.value, currentMemberIndex.value);
 
-      if (currentMemberIndex.value < 6) {
-        currentMemberIndex.value++;
-      } else {
-        currentMemberIndex.value = 0;
-      }
+  //     if (currentMemberIndex.value < 6) {
+  //       currentMemberIndex.value++;
+  //     } else {
+  //       currentMemberIndex.value = 0;
+  //     }
 
-      for (let i = 0; i < 6; i++) {
-        worldObjectsToUpdate.value[i].body.applyForce(new CANNON.Vec3(Math.floor(Math.random() * 20000) - 10000, -(Math.random() * 12500 + 7500), 0), new CANNON.Vec3(0, 0, 0));
+  //     for (let i = 0; i < 6; i++) {
+  //       worldObjectsToUpdate.value[i].body.applyForce(new CANNON.Vec3(Math.floor(Math.random() * 20000) - 10000, -(Math.random() * 12500 + 7500), 0), new CANNON.Vec3(0, 0, 0));
 
-        worldObjectsToUpdate.value[i].mesh.material.map = members.value[Object.keys(members.value)[currentMemberIndex.value]].getIconTextures()[Math.floor(Math.random() * 3)];
-      }
-      objectsToUpdate.value[0].mesh.material.map = btnDownMemberTexture;
-    }
-  };
+  //       worldObjectsToUpdate.value[i].mesh.material.map = members.value[Object.keys(members.value)[currentMemberIndex.value]].getIconTextures()[Math.floor(Math.random() * 3)];
+  //     }
+  //     objectsToUpdate.value[0].mesh.material.map = btnDownMemberTexture;
+  //   }
+  // };
 
-  const onMouseUp = (event) => {
-    console.log("up");
-    objectsToUpdate.value[0].mesh.material.map = btnUpMemberTexture;
-  };
-  const onMouseMove = (event) => {
-    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
-    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  };
+  // const onMouseUp = (event) => {
+  //   console.log("up");
+  //   objectsToUpdate.value[0].mesh.material.map = btnUpMemberTexture;
+  // };
+  // const onMouseMove = (event) => {
+  //   pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+  //   pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  // };
 
-  window.addEventListener("mousedown", onMouseClick, false);
-  window.addEventListener("mouseup", onMouseUp, false);
-  window.addEventListener("mousemove", onMouseMove, false);
+  // window.addEventListener("mousedown", onMouseClick, false);
+  // window.addEventListener("mouseup", onMouseUp, false);
+  // window.addEventListener("mousemove", onMouseMove, false);
 
   /**
    * Light
@@ -254,6 +277,7 @@ function initThree() {
     canvas: myCanvas.value,
     antialias: true,
   });
+
   renderer.setSize(sizes.width, sizes.height);
 
   // Animate
@@ -272,10 +296,12 @@ function initThree() {
 
   //cannon floor
   const floorShape = new CANNON.Plane();
+
   const topFloorBody = new CANNON.Body();
   const leftFloorBody = new CANNON.Body();
   const rightFloorBody = new CANNON.Body();
   const bottomFloorBody = new CANNON.Body();
+
   topFloorBody.mass = 0;
   topFloorBody.addShape(floorShape);
   topFloorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), Math.PI / 2);
@@ -328,12 +354,46 @@ function initThree() {
   });
   renderer.setAnimationLoop(tick);
 }
+
+const onClickTextBtn = () => {
+  console.log("onClick");
+  if (currentMemberIndex.value < 6) {
+    currentMemberIndex.value++;
+  } else {
+    currentMemberIndex.value = 0;
+  }
+
+  for (let i = 0; i < 6; i++) {
+    worldObjectsToUpdate.value[i].body.applyForce(new CANNON.Vec3(Math.floor(Math.random() * 20000) - 10000, -(Math.random() * 12500 + 7500), 0), new CANNON.Vec3(0, 0, 0));
+
+    worldObjectsToUpdate.value[i].mesh.material.map = members.value[Object.keys(members.value)[currentMemberIndex.value]].getIconTextures()[Math.floor(Math.random() * 3)];
+  }
+};
 </script>
 
 <template>
-  <div class="relative">
+  <div class="relative w-full flex justify-center">
     <canvas ref="myCanvas"> </canvas>
-    <div class="absolute top-10 text-white text-5xl z-[1000]">wqdqwdqwqwdqdqwd</div>
+    <!-- <div class="absolute top-10 text-white text-5xl z-[1000]">wqdqwdqwqwdqdqwd</div> -->
+    <div class="absolute bottom-1/4 tracking-[0.095em] font-black" style="font-family: arial-black">
+      <p class="w-fit mx-auto text-4xl text-white">MEET OUR TEAM</p>
+      <button class="mt-5 py-8 px-16 w-[549px] h-[152px] text-[#292F33] text-5xl z-[1000] border-white border-2 rounded-full grid grid-cols-12 bg-white justify-center items-center" @click="onClickTextBtn">
+        <div class="w-16 h-16 my-auto col-start-2 col-span-3">
+          <img class="w-full h-full" :src="memberBtnDatas[currentMemberIndex].memberIconImgSrc" />
+        </div>
+        <div class="text-start col-span-8">
+          <div class="flex items-end gap-5">
+            <p class="text-4xl leading-[1.75rem]">{{ memberBtnDatas[currentMemberIndex].name }}</p>
+            <div class="flex gap-2.5 items-end">
+              <div class="w-6 h-6" v-for="n in 3">
+                <img class="w-full h-full" :src="memberBtnDatas[currentMemberIndex].memberEmojiImgSrcs[n - 1]" />
+              </div>
+            </div>
+          </div>
+          <p class="text-2xl">{{ memberBtnDatas[currentMemberIndex].companyPosition }}</p>
+        </div>
+      </button>
+    </div>
   </div>
 </template>
 <style></style>
